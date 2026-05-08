@@ -337,9 +337,10 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
       </div>
       <div class="chart-panel">
         <div class="chart-title">% Realisasi Q1 terhadap Target APBN Tahunan</div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#0d9488"></div>% Penerimaan</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#b45309"></div>% Belanja</div>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem">
+          <button class="rb-btn active" id="rb2-all" onclick="toggleH2('all')">Keduanya</button>
+          <button class="rb-btn" id="rb2-pend" onclick="toggleH2('pend')">% Penerimaan saja</button>
+          <button class="rb-btn" id="rb2-bel" onclick="toggleH2('bel')">% Belanja saja</button>
         </div>
         <div class="chart-inner"><canvas id="cH2"></canvas></div>
       </div>
@@ -403,30 +404,39 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
 <section class="slide" id="s7">
   <div class="slide-inner">
     <div class="slide-header"><span class="slide-num">07</span><span class="slide-tag">Analisis MBG</span></div>
-    <div class="slide-title">Seberapa Besar Pengaruh MBG pada <span class="accent">Pertumbuhan G & I?</span></div>
-    <div class="slide-subtitle">Analisis kontribusi, multiplier fiskal, dan co-investment swasta</div>
+    <div class="slide-title">Seberapa Besar Pengaruh MBG pada <span class="accent">Pertumbuhan G?</span> — Perspektif Historis</div>
+    <div class="slide-subtitle">Delta G Nominal Q1 2011–2026 vs rata-rata historis · Back-of-envelope multiplier</div>
     <div class="divider"></div>
     <div class="metric-row">
-      <div class="metric"><div class="metric-label">Delta G Nominal Q1</div><div class="metric-val mv-amber">+81,7 T</div><div class="metric-sub">333,9 T → 415,6 T</div></div>
-      <div class="metric"><div class="metric-label">MBG dari Belanja Barang K/L</div><div class="metric-val mv-teal">55,34 T</div><div class="metric-sub">~67,7% dari delta G</div></div>
-      <div class="metric"><div class="metric-label">G Growth Q1 2026</div><div class="metric-val mv-red">+21,81%</div><div class="metric-sub">tertinggi dalam 3 tahun terakhir</div></div>
-      <div class="metric"><div class="metric-label">Multiplier Est. MBG</div><div class="metric-val mv-green">1,5–2,5×</div><div class="metric-sub">food transfer programs</div></div>
+      <div class="metric"><div class="metric-label">Rata-rata delta G Q1 (2011–2025)</div><div class="metric-val" style="color:var(--text2)">+15,61 T</div><div class="metric-sub">pertumbuhan "normal" historis</div></div>
+      <div class="metric"><div class="metric-label">Delta G Q1 2026 aktual</div><div class="metric-val mv-amber">+81,67 T</div><div class="metric-sub">5,2× di atas rata-rata historis</div></div>
+      <div class="metric"><div class="metric-label">Excess di atas normal</div><div class="metric-val mv-red">+66,06 T</div><div class="metric-sub">+423% vs rata-rata historis</div></div>
+      <div class="metric"><div class="metric-label">Realisasi MBG Q1 2026</div><div class="metric-val mv-teal">55,34 T</div><div class="metric-sub">84% dari excess G</div></div>
+      <div class="metric"><div class="metric-label">Implied multiplier sederhana</div><div class="metric-val mv-green">~1,19×</div><div class="metric-sub">66,06 ÷ 55,34</div></div>
     </div>
     <div class="two-col" style="flex:1">
       <div class="chart-panel">
-        <div class="chart-title">Dekomposisi Delta G Nominal Q1 2026 (+81,7 T)</div>
+        <div class="chart-title">Delta G Nominal Q1 per Tahun (2011–2026) vs Rata-rata Historis (Rp T)</div>
         <div class="chart-inner"><canvas id="cM1"></canvas></div>
-        <div style="font-size:.65rem;color:var(--text2);margin-top:.6rem;line-height:1.7">
-          Dengan alokasi Q1 MBG = Rp55,34 T dan multiplier fiskal pangan <strong>1,5–2,5×</strong>, potensi output tambahan ke perekonomian = <strong style="color:var(--teal)">Rp83,0–138,4 T</strong> atau sekitar <strong style="color:var(--teal)">1,3–2,2%</strong> dari PDB nominal Q1 (Rp6.187 T). Ini belum termasuk efek investasi swasta SPPG yang menambah PMTB secara langsung.
+        <div style="background:var(--bg3);border-radius:6px;padding:.7rem .9rem;margin-top:.6rem;border-left:3px solid var(--amber)">
+          <div style="font-size:.67rem;color:var(--text);font-weight:600;margin-bottom:.3rem">Interpretasi Back-of-Envelope</div>
+          <div style="font-size:.65rem;color:var(--text2);line-height:1.75">
+            G "normal" Q1 2026 (jika hanya tumbuh rata-rata historis) = <strong>Rp349,6 T</strong>.<br>
+            G aktual = <strong>Rp415,6 T</strong>. Excess = <strong style="color:var(--red)">Rp66,06 T</strong> di atas baseline.<br>
+            MBG yang menjadi "bahan bakar" excess ini = <strong style="color:var(--teal)">Rp55,34 T</strong>.<br>
+            Rasio sederhana: <strong>66,06 ÷ 55,34 ≈ 1,19×</strong> — setiap Rp1 MBG menghasilkan ~Rp1,19 tambahan G di atas pertumbuhan normal. Ini sedikit di bawah benchmark literatur fiskal (1,5–2,5×), mengindikasikan pada fase awal implementasi, efisiensi transmisi MBG masih memiliki ruang untuk ditingkatkan.
+          </div>
         </div>
       </div>
       <div class="chart-panel" style="gap:.4rem">
         <div class="chart-title">Referensi Literatur — Fiscal Multiplier</div>
         <div class="ref-card teal"><div class="ref-title teal">Blanchard & Leigh (2013) — AER</div><div class="ref-body">Multiplier fiskal negara berkembang dengan output gap: <strong>0,8–1,5×</strong></div></div>
         <div class="ref-card amber"><div class="ref-title amber">Nakamura & Steinsson (2014) — AER</div><div class="ref-body">Pengeluaran pemerintah saat kapasitas longgar: <strong>~1,5×</strong></div></div>
-        <div class="ref-card green"><div class="ref-title green">Ahmed et al. (2016) — IFPRI</div><div class="ref-body">Food transfer programs (developing): MPC tinggi → <strong>1,5–2,5×</strong></div></div>
         <div class="ref-card red"><div class="ref-title red">IMF Fiscal Monitor (2019)</div><div class="ref-body">Indonesia fiscal multiplier baseline: <strong>0,65–1,0×</strong></div></div>
-        <div style="font-size:.62rem;color:var(--text3);line-height:1.65;margin-top:.3rem"><strong style="color:var(--text2)">Co-investment SPPG vs PMTB:</strong> Estimasi investasi swasta Rp52,7–79,1 T merupakan pembentukan aset riil yang langsung masuk ke komponen I (PMTB). Model public-private ini belum pernah ada dalam format ini di Indonesia sebelumnya — implikasinya terhadap multiplier investasi masih perlu dikaji lebih lanjut melalui studi spesifik.</div>
+        <div style="font-size:.63rem;color:var(--text2);line-height:1.7;margin-top:.4rem;background:var(--bg3);padding:.65rem .8rem;border-radius:6px">
+          <strong style="color:var(--text)">Catatan metodologi:</strong> Angka 1,19× adalah estimasi kasar (<em>back-of-envelope</em>) tanpa model IO atau ekonometrik. Faktor yang bisa menjelaskan gap dengan literatur: (1) biaya administrasi & overhead awal implementasi, (2) kebocoran ke impor bahan pangan, (3) program masih dalam tahap <em>ramp-up</em> sehingga efisiensi belum optimal.<br><br>
+          <strong style="color:var(--text)">Co-investment SPPG:</strong> Estimasi ~Rp52,7–79,1 T investasi swasta (26.362 SPPG × Rp2–3 M) adalah pembentukan aset riil yang masuk ke komponen I (PMTB). Efek ini belum tercapture dalam angka 1,19× di atas.
+        </div>
       </div>
     </div>
     <div class="source-note">Sumber: Laporan APBN Kita April 2026 (diolah). Estimasi multiplier berdasarkan literatur internasional; studi spesifik MBG belum tersedia.</div>
@@ -678,8 +688,58 @@ mk('cMBG2',{
   }
 });
 
-// ─── SLIDE 7 MBG ANALYSIS ───
-mk('cM1',{type:'bar',data:{labels:['G Total Q1 2026','└ MBG (Realisasi Q1)','└ THR & Gaji PNS','└ Lainnya'],datasets:[{label:'Rp T',data:[415.6,55.34,30.0,330.26],backgroundColor:[TC+'55',BC+'CC',BLC+'99',GRC+'66'],borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` Rp${c.parsed.x.toFixed(2)}T`}}},scales:{x:{grid,ticks:{...ticks,callback:v=>`${v}T`}},y:{grid:{display:false},ticks:{...ticks,font:{size:10,family:"'IBM Plex Sans',sans-serif"}}}}}});
+// ─── SLIDE 7 — Historical Delta G chart ───
+const deltaG = [11.7,20.6,11.3,22.5,14.6,20.4,11.8,12.8,16.4,19.0,10.1,-16.9,12.2,65.9,2.0,81.67];
+const deltaGYrs = ['2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+const avgG = 15.61;
+mk('cM1',{
+  type:'bar',
+  data:{
+    labels:deltaGYrs,
+    datasets:[{
+      label:'Delta G Nominal Q1 (Rp T)',
+      data:deltaG,
+      backgroundColor:deltaG.map((v,i)=>
+        i===15 ? RC+'CC' :          // 2026 merah
+        i===13 ? BC+'AA' :          // 2024 amber (outlier sebelumnya)
+        v<0    ? '#9ca3af88' :       // negatif abu-abu
+                 TC+'77'             // normal teal
+      ),
+      borderRadius:3
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:c=>` ${c.parsed.y>0?'+':''}${c.parsed.y.toFixed(2)} T`}},
+      annotation:{annotations:{
+        avg:{type:'line',yMin:avgG,yMax:avgG,borderColor:RC+'99',borderDash:[5,3],borderWidth:1.8,
+          label:{content:`Rata-rata 2011–2025: +${avgG}T`,display:true,position:'end',
+            color:RC,font:{size:8,family:"'IBM Plex Sans',sans-serif"},backgroundColor:'transparent'}},
+        normal:{type:'box',yMin:0,yMax:avgG*1.5,backgroundColor:TC+'08',borderWidth:0,
+          label:{content:'Zona normal',display:true,position:{x:'center',y:'start'},
+            color:TC,font:{size:8},backgroundColor:'transparent'}}
+      }}
+    },
+    scales:{
+      x:{grid,ticks:{...ticks,maxRotation:45,autoSkip:false}},
+      y:{grid,ticks:{...ticks,callback:v=>`${v}T`},title:{display:true,text:'Rp T',color:'#9ca3af',font:{size:9}}}
+    }
+  }
+});
+
+// ─── SLIDE 5 — cH2 with toggle ───
+const chartH2 = // cH2 now created with toggle above
+
+function toggleH2(mode){
+  if(!chartH2) return;
+  document.querySelectorAll('[id^="rb2-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('rb2-'+mode).classList.add('active');
+  const vis=mode==='all'?[true,true]:mode==='pend'?[true,false]:[false,true];
+  chartH2.data.datasets.forEach((ds,i)=>{ds.hidden=!vis[i];});
+  chartH2.update();
+}
 
 // ─── NAV DOTS ───
 const slides=document.querySelectorAll('.slide');
