@@ -156,6 +156,11 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
   .intro-title{font-size:2rem}
   .intro-bg{display:none}
 }
+
+/* RADIO TOGGLE BUTTONS */
+.rb-btn{font-family:'IBM Plex Sans',sans-serif;font-size:.62rem;padding:.22rem .7rem;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .18s;font-weight:500}
+.rb-btn:hover{border-color:var(--teal);color:var(--teal)}
+.rb-btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
 </style>
 </head>
 <body>
@@ -323,9 +328,10 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;flex:1;min-height:0">
       <div class="chart-panel">
         <div class="chart-title">Nominal Belanja & Penerimaan Q1 (Rp T)</div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#0d9488"></div>Penerimaan</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#b45309"></div>Belanja</div>
+        <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.4rem">
+          <button class="rb-btn active" id="rb-all" onclick="toggleH1('all')">Keduanya</button>
+          <button class="rb-btn" id="rb-pend" onclick="toggleH1('pend')">Penerimaan saja</button>
+          <button class="rb-btn" id="rb-bel" onclick="toggleH1('bel')">Belanja saja</button>
         </div>
         <div class="chart-inner"><canvas id="cH1"></canvas></div>
       </div>
@@ -402,7 +408,7 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
     <div class="divider"></div>
     <div class="metric-row">
       <div class="metric"><div class="metric-label">Delta G Nominal Q1</div><div class="metric-val mv-amber">+81,7 T</div><div class="metric-sub">333,9 T → 415,6 T</div></div>
-      <div class="metric"><div class="metric-label">MBG dari Belanja Barang K/L</div><div class="metric-val mv-teal">54,4 T</div><div class="metric-sub">~66% dari delta G</div></div>
+      <div class="metric"><div class="metric-label">MBG dari Belanja Barang K/L</div><div class="metric-val mv-teal">55,34 T</div><div class="metric-sub">~67,7% dari delta G</div></div>
       <div class="metric"><div class="metric-label">G Growth Q1 2026</div><div class="metric-val mv-red">+21,81%</div><div class="metric-sub">tertinggi dalam 3 tahun terakhir</div></div>
       <div class="metric"><div class="metric-label">Multiplier Est. MBG</div><div class="metric-val mv-green">1,5–2,5×</div><div class="metric-sub">food transfer programs</div></div>
     </div>
@@ -411,7 +417,7 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
         <div class="chart-title">Dekomposisi Delta G Nominal Q1 2026 (+81,7 T)</div>
         <div class="chart-inner"><canvas id="cM1"></canvas></div>
         <div style="font-size:.65rem;color:var(--text2);margin-top:.6rem;line-height:1.7">
-          Dengan alokasi Q1 MBG = Rp54,4 T dan multiplier fiskal pangan <strong>1,5–2,5×</strong>, potensi output tambahan ke perekonomian = <strong style="color:var(--teal)">Rp81,6–136,0 T</strong> atau sekitar <strong style="color:var(--teal)">1,3–2,2%</strong> dari PDB nominal Q1 (Rp6.187 T). Ini belum termasuk efek investasi swasta SPPG yang menambah PMTB secara langsung.
+          Dengan alokasi Q1 MBG = Rp55,34 T dan multiplier fiskal pangan <strong>1,5–2,5×</strong>, potensi output tambahan ke perekonomian = <strong style="color:var(--teal)">Rp83,0–138,4 T</strong> atau sekitar <strong style="color:var(--teal)">1,3–2,2%</strong> dari PDB nominal Q1 (Rp6.187 T). Ini belum termasuk efek investasi swasta SPPG yang menambah PMTB secara langsung.
         </div>
       </div>
       <div class="chart-panel" style="gap:.4rem">
@@ -445,10 +451,10 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
         <div class="flag-title">Pertama Kali Defisit Primer sejak Q1 2021</div>
         <div class="flag-body">Q1 2026 adalah pertama kalinya keseimbangan primer kembali defisit sejak pandemi. Swing dari <span class="flag-stat">+Rp21,9 T</span> (Q1 2025) ke <span class="flag-stat">−Rp95,8 T</span> (Q1 2026) = perubahan <span class="flag-stat">−Rp117,7 T</span> dalam setahun. Defisit primer mengindikasikan penerimaan negara tidak cukup membiayai belanja bahkan sebelum memperhitungkan pembayaran bunga utang yang kini mencapai ~Rp144 T per kuartal.</div>
       </div>
-      <div class="flag-card warn">
+      <div class="flag-card danger">
         <div class="flag-num">03 — NET EKSPOR</div>
-        <div class="flag-title">X−M Menyusut: Tekanan Nyata pada Neraca Berjalan</div>
-        <div class="flag-body">Net ekspor nominal Q1 2026 = <span class="flag-stat" style="color:var(--amber)">+Rp57,5 T</span> vs Q1 2025 = <span class="flag-stat" style="color:var(--amber)">+Rp138,2 T</span>. Penyusutan <span class="flag-stat" style="color:var(--amber)">−Rp80,7 T</span> YoY. Secara riil, ekspor hanya tumbuh <span class="flag-stat" style="color:var(--amber)">+0,9%</span> sementara impor naik +7,2%. Kombinasi belanja G yang tinggi (demand impor) dan ekspor stagnan berisiko menekan neraca pembayaran dan nilai tukar rupiah jika berlanjut ke Q2–Q3.</div>
+        <div class="flag-title">X−M Penurunan Terburuk Q1 Sejak 2018 — <span style="font-family:'JetBrains Mono',monospace">−24,34%</span> YoY (Riil)</div>
+        <div class="flag-body">Growth X−M riil Q1 2026 = <span class="flag-stat">−24,34%</span> — penurunan terburuk pada Q1 dalam rentang data sejak 2018 (lebih dalam dari Q1 2018 yang −48,21%, namun setelah periode pemulihan 2022–2025 ini adalah sinyal reversal yang serius). Net ekspor nominal menyusut dari <span class="flag-stat">+Rp138,2 T</span> (Q1 2025) menjadi <span class="flag-stat">+Rp57,5 T</span> (Q1 2026), kehilangan <span class="flag-stat">−Rp80,7 T</span>. Secara riil, ekspor hanya tumbuh <span class="flag-stat">+0,9%</span> sementara impor melonjak +7,2%. Akselerasi belanja pemerintah yang mendorong permintaan domestik (termasuk impor bahan pangan MBG) menjadi salah satu kontributor tekanan ini.</div>
       </div>
       <div class="flag-card warn">
         <div class="flag-num">04 — PENERIMAAN & TAX RATIO</div>
@@ -478,7 +484,7 @@ h1,h2,.slide-title{font-family:'Syne',sans-serif}
         <div class="ta-side-title">✗ Sisi yang Perlu Diwaspadai</div>
         <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Defisit dan keseimbangan primer tertekan berat.</strong> Defisit Q1 = Rp240,1 T (34,8% target), keseimbangan primer = −Rp95,8 T. Swing negatif terbesar sejak pandemi. Tekanan fiskal ini nyata dan memerlukan manajemen ketat di Q2–Q4.</div></div>
         <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Risiko "perburuan SPPG" tanpa pengawasan memadai.</strong> Model co-investment yang pro-profit berpotensi menciptakan insentif yang salah jika tidak diawasi ketat — analoginya mirip kritik atas model privatisasi ICE di AS. Akuntabilitas publik dan standar layanan menjadi kunci.</div></div>
-        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Net ekspor dan neraca berjalan tertekan.</strong> X−M menyusut −Rp80,7 T nominal. Tekanan pada stabilitas makroekonomi dari sisi eksternal tidak bisa diabaikan, terutama jika konflik geopolitik memperburuk kondisi global.</div></div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Net ekspor (X−M) — penurunan terburuk Q1 sejak 2018.</strong> Growth X−M riil Q1 2026 = <strong style="color:var(--red)">−24,34% YoY</strong>, paling dalam pada Q1 dalam rentang data yang tersedia. Net ekspor nominal menyusut −Rp80,7 T. Ini bukan hanya tekanan siklus biasa — kombinasi impor yang dipercepat oleh demand MBG dan ekspor yang stagnan menciptakan tekanan nyata pada neraca berjalan dan nilai tukar.</div></div>
         <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Tax ratio belum membaik secara struktural.</strong> Pertumbuhan pajak YoY positif, namun rasio pajak terhadap PDB (~10–11%) tetap jauh di bawah peers. Tanpa reformasi perpajakan, ekspansi belanja jangka menengah hanya ditopang utang.</div></div>
       </div>
     </div>
@@ -587,10 +593,20 @@ mk('cA1',{type:'bar',data:{labels:['Pendapatan','Belanja K/L','Bel. Non-K/L','TK
 mk('cA2',{type:'doughnut',data:{labels:['Belanja K/L','Belanja Non-K/L','Transfer Ke Daerah'],datasets:[{data:[281.2,329.1,204.8],backgroundColor:[TC+'CC',BC+'CC',BLC+'CC'],borderWidth:2,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'#4a4a46',font:{size:10,family:"'IBM Plex Sans',sans-serif"},padding:10,boxWidth:10}},tooltip:{callbacks:{label:c=>`Rp${c.parsed.toFixed(1)}T (${(c.parsed/815*100).toFixed(1)}%)`}}}}});
 
 // ─── SLIDE 5 HISTORICAL ───
-mk('cH1',{type:'bar',data:{labels:apbnYrs,datasets:[
+const chartH1 = mk('cH1',{type:'bar',data:{labels:apbnYrs,datasets:[
   {label:'Penerimaan',data:apbn.pend,backgroundColor:TC+'88',borderRadius:3},
   {label:'Belanja',data:apbn.bel,backgroundColor:BC+'88',borderRadius:3}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: Rp${c.parsed.y.toFixed(1)}T`}}},scales:{x:{grid,ticks},y:{grid,ticks:{...ticks,callback:v=>`${v}T`}}}}});
+
+function toggleH1(mode){
+  if(!chartH1) return;
+  document.querySelectorAll('.rb-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('rb-'+mode).classList.add('active');
+  // 0 = Penerimaan, 1 = Belanja
+  const vis = mode==='all'?[true,true]:mode==='pend'?[true,false]:[false,true];
+  chartH1.data.datasets.forEach((ds,i)=>{ ds.hidden = !vis[i]; });
+  chartH1.update();
+}
 
 mk('cH2',{type:'bar',data:{labels:apbnYrs,datasets:[
   {label:'% Penerimaan',data:apbn.pctP,backgroundColor:TC+'88',borderRadius:3},
@@ -663,7 +679,7 @@ mk('cMBG2',{
 });
 
 // ─── SLIDE 7 MBG ANALYSIS ───
-mk('cM1',{type:'bar',data:{labels:['G Total Q1 2026','└ MBG (Bel. Barang K/L)','└ THR & Gaji PNS','└ Lainnya'],datasets:[{label:'Rp T',data:[415.6,54.4,30.0,331.2],backgroundColor:[TC+'55',BC+'CC',BLC+'99',GRC+'66'],borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` Rp${c.parsed.x.toFixed(1)}T`}}},scales:{x:{grid,ticks:{...ticks,callback:v=>`${v}T`}},y:{grid:{display:false},ticks:{...ticks,font:{size:10,family:"'IBM Plex Sans',sans-serif"}}}}}});
+mk('cM1',{type:'bar',data:{labels:['G Total Q1 2026','└ MBG (Realisasi Q1)','└ THR & Gaji PNS','└ Lainnya'],datasets:[{label:'Rp T',data:[415.6,55.34,30.0,330.26],backgroundColor:[TC+'55',BC+'CC',BLC+'99',GRC+'66'],borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` Rp${c.parsed.x.toFixed(2)}T`}}},scales:{x:{grid,ticks:{...ticks,callback:v=>`${v}T`}},y:{grid:{display:false},ticks:{...ticks,font:{size:10,family:"'IBM Plex Sans',sans-serif"}}}}}});
 
 // ─── NAV DOTS ───
 const slides=document.querySelectorAll('.slide');
