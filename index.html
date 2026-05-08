@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Makroekonomi & Fiskal Indonesia Q1 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<style>
+:root {
+  --bg: #070D1C;
+  --bg2: #0F1A30;
+  --bg3: #162240;
+  --panel: #1A2B4A;
+  --panelb: #223562;
+  --teal: #2DD4BF;
+  --teal2: #14B8A6;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --red2: #DC2626;
+  --green: #22C55E;
+  --blue: #3B82F6;
+  --white: #F8FAFC;
+  --gray1: #CBD5E1;
+  --gray2: #94A3B8;
+  --gray3: #475569;
+  --gray4: #1E293B;
+  --border: rgba(45,212,191,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-snap-type:y mandatory;overflow-y:scroll;scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden}
+.slide{
+  min-height:100vh;scroll-snap-align:start;scroll-snap-stop:always;
+  display:flex;flex-direction:column;position:relative;padding:0;
+  border-bottom:1px solid rgba(45,212,191,0.08);
+}
+.slide-inner{flex:1;display:flex;flex-direction:column;padding:2.5rem 3.5rem 2rem;max-width:1600px;margin:0 auto;width:100%}
+h1,h2,h3{font-family:'Syne',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* NAV DOTS */
+#nav-dots{position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;gap:.7rem}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gray3);cursor:pointer;transition:all .3s;border:none}
+.dot.active{background:var(--teal);transform:scale(1.4)}
+.dot:hover{background:var(--gray1)}
+
+/* HEADER BAR */
+.slide-header{display:flex;align-items:baseline;gap:1rem;margin-bottom:.4rem}
+.slide-num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--teal);letter-spacing:.15em;text-transform:uppercase;opacity:.7}
+.slide-tag{font-size:.65rem;font-family:'JetBrains Mono',monospace;color:var(--gray2);background:var(--bg3);padding:.15rem .6rem;border-radius:2px;border:1px solid var(--border);text-transform:uppercase;letter-spacing:.1em}
+.slide-title{font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:700;color:var(--white);line-height:1.2}
+.slide-subtitle{font-size:.8rem;color:var(--gray2);margin-top:.25rem;font-weight:300}
+.accent{color:var(--teal)}
+.accent-amber{color:var(--amber)}
+.accent-red{color:var(--red)}
+.accent-green{color:var(--green)}
+.divider{height:1px;background:linear-gradient(90deg,var(--teal) 0%,rgba(45,212,191,0) 70%);margin:.7rem 0 1rem;opacity:.4}
+
+/* METRIC CARDS */
+.metric-row{display:flex;gap:.75rem;margin-bottom:.9rem;flex-wrap:wrap}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:.7rem 1rem;flex:1;min-width:130px}
+.metric-label{font-size:.65rem;color:var(--gray2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem}
+.metric-val{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;line-height:1}
+.metric-sub{font-size:.65rem;color:var(--gray2);margin-top:.2rem}
+.mv-teal{color:var(--teal)}
+.mv-amber{color:var(--amber)}
+.mv-red{color:var(--red)}
+.mv-green{color:var(--green)}
+
+/* CHART CONTAINERS */
+.chart-wrap{position:relative;flex:1;min-height:0}
+.chart-wrap canvas{display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;flex:1;min-height:0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;flex:1;min-height:0}
+.chart-panel{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;display:flex;flex-direction:column}
+.chart-title{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:600;color:var(--gray1);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.06em}
+.chart-inner{position:relative;flex:1;min-height:0}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:.72rem}
+.data-table th{
+  background:var(--bg3);color:var(--gray2);font-family:'IBM Plex Sans',sans-serif;
+  font-weight:500;text-align:right;padding:.45rem .6rem;
+  font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;
+  border-bottom:1px solid var(--border);
+}
+.data-table th:first-child{text-align:left}
+.data-table td{padding:.4rem .6rem;border-bottom:1px solid rgba(255,255,255,0.04);text-align:right;font-family:'JetBrains Mono',monospace;font-size:.68rem}
+.data-table td:first-child{text-align:left;font-family:'IBM Plex Sans',sans-serif;font-weight:500;color:var(--gray1);font-size:.7rem}
+.data-table tr:hover td{background:rgba(45,212,191,0.04)}
+.data-table tr.total-row td{background:var(--bg3);font-weight:700;color:var(--white);border-top:1px solid var(--border)}
+.pos{color:var(--green)}
+.neg{color:var(--red)}
+.neu{color:var(--gray2)}
+
+/* SOURCE NOTE */
+.source-note{font-size:.58rem;color:var(--gray3);margin-top:.5rem;letter-spacing:.02em}
+
+/* SLIDE 7 CARDS */
+.flag-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;flex:1}
+.flag-card{background:var(--bg2);border:1px solid;border-radius:8px;padding:1rem 1.2rem}
+.flag-card.warn{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.05)}
+.flag-card.danger{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.05)}
+.flag-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--amber);opacity:.8;margin-bottom:.3rem}
+.flag-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--white);margin-bottom:.5rem}
+.flag-body{font-size:.7rem;color:var(--gray1);line-height:1.6}
+.flag-stat{font-family:'JetBrains Mono',monospace;color:var(--amber);font-size:.8rem;font-weight:700}
+
+/* SLIDE 8 TAKEAWAY */
+.ta-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;flex:1}
+.ta-side{background:var(--bg2);border-radius:8px;padding:1.2rem 1.4rem;display:flex;flex-direction:column}
+.ta-side-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;padding:.3rem .8rem;border-radius:4px;margin-bottom:.8rem;display:inline-flex;align-items:center;gap:.4rem}
+.good .ta-side-title{background:rgba(34,197,94,.15);color:var(--green)}
+.bad  .ta-side-title{background:rgba(239,68,68,.15);color:var(--red)}
+.ta-item{display:flex;gap:.6rem;margin-bottom:.7rem;align-items:flex-start}
+.ta-bullet{width:5px;height:5px;border-radius:50%;margin-top:.45rem;flex-shrink:0}
+.good .ta-bullet{background:var(--green)}
+.bad  .ta-bullet{background:var(--red)}
+.ta-text{font-size:.7rem;color:var(--gray1);line-height:1.6}
+.ta-text strong{color:var(--white)}
+
+/* PROGRESS BAR */
+.prog-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin:.3rem 0}
+.prog-fill{height:100%;border-radius:2px;transition:width .8s ease}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.5rem}
+.legend-item{display:flex;align-items:center;gap:.3rem;font-size:.62rem;color:var(--gray2)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* INTRO SLIDE */
+.intro-content{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;flex:1;padding:3rem 0}
+.intro-tag{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--teal);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1rem;opacity:.8}
+.intro-title{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;line-height:1.1;margin-bottom:1.5rem;max-width:800px}
+.intro-sub{font-size:.95rem;color:var(--gray2);max-width:600px;line-height:1.7;margin-bottom:2rem}
+.intro-pills{display:flex;flex-wrap:wrap;gap:.5rem}
+.pill{font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:.25rem .75rem;border-radius:2px;border:1px solid var(--border);color:var(--gray2);text-transform:uppercase;letter-spacing:.08em}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;opacity:.4;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.scroll-hint span{font-size:.6rem;font-family:'JetBrains Mono',monospace;color:var(--gray2);letter-spacing:.12em}
+.scroll-arrow{width:20px;height:20px;border-right:1.5px solid var(--gray2);border-bottom:1.5px solid var(--gray2);transform:rotate(45deg)}
+
+/* Responsive */
+@media(max-width:1200px){
+  .slide-inner{padding:1.8rem 2rem 1.5rem}
+  .slide-title{font-size:1.25rem}
+  .intro-title{font-size:2.2rem}
+}
+
+/* Grid helper */
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:1rem;flex:1;min-height:0}
+.grid-1-2{display:grid;grid-template-columns:1fr 2fr;gap:1rem;flex:1;min-height:0}
+.col-flex{display:flex;flex-direction:column;gap:.7rem}
+</style>
+</head>
+<body>
+
+<!-- NAV DOTS -->
+<div id="nav-dots"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 0 — INTRO
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s0" style="background:linear-gradient(135deg,#070D1C 0%,#0F1A30 50%,#0a1528 100%)">
+  <div class="slide-inner">
+    <div class="intro-content">
+      <div class="intro-tag">Analisis Makroekonomi & Fiskal Indonesia</div>
+      <div class="intro-title">
+        Kinerja <span class="accent">Q1 2026</span>:<br>Antara Akselerasi<br>dan <span style="color:var(--amber)">Lampu Kuning</span>
+      </div>
+      <div class="intro-sub">Telaah komprehensif pertumbuhan PDB, dinamika fiskal APBN, dan dampak program Makan Bergizi Gratis (MBG) pada triwulan pertama 2026. Berbasis data BPS & APBN Kita Edisi April 2026.</div>
+      <div class="intro-pills">
+        <span class="pill">PDB Q1 2026: +5,61%</span>
+        <span class="pill">Defisit Q1: Rp240,1T</span>
+        <span class="pill">Belanja Pemerintah +21,81%</span>
+        <span class="pill">MBG Rp55,3T</span>
+        <span class="pill">26.362 SPPG Operasional</span>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-arrow"></div>
+      <span>scroll</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 1 — PDB COMPARISON Q1 2025 vs Q1 2026
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s1">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">01</span><span class="slide-tag">PDB Pengeluaran</span></div>
+    <div class="slide-title">Perbandingan PDB Q1 2025 vs Q1 2026 — <span class="accent">Menurut Komponen Pengeluaran</span></div>
+    <div class="slide-subtitle">Nilai Riil Atas Dasar Harga Konstan 2010 (Rp Triliun)</div>
+    <div class="divider"></div>
+
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">PDB Total Q1 2026</div><div class="metric-val mv-teal">3.447,7 T</div><div class="metric-sub mono">+5,61% YoY</div></div>
+      <div class="metric"><div class="metric-label">Pertumbuhan tertinggi</div><div class="metric-val mv-amber">G +21,81%</div><div class="metric-sub mono">Konsumsi Pemerintah</div></div>
+      <div class="metric"><div class="metric-label">Kontributor terbesar (C)</div><div class="metric-val mv-green">+2,94 pp</div><div class="metric-sub mono">Kons. RT +5,52%</div></div>
+      <div class="metric"><div class="metric-label">Tekanan Impor (M)</div><div class="metric-val mv-red">+7,18%</div><div class="metric-sub mono">−1,37 pp drag</div></div>
+      <div class="metric"><div class="metric-label">Investasi (PMTB+Inv)</div><div class="metric-val mv-teal">+7,24%</div><div class="metric-sub mono">Kontribusi +2,36 pp</div></div>
+    </div>
+
+    <div class="two-col" style="flex:1">
+      <div class="chart-panel">
+        <div class="chart-title">Nilai Absolut Q1 2025 vs Q1 2026 per Sub-Komponen (Rp T)</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#2563EB"></div>Q1 2025</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#2DD4BF"></div>Q1 2026</div>
+        </div>
+        <div class="chart-inner"><canvas id="c1bar"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Kontribusi Sumber Pertumbuhan PDB (Percentage Point)</div>
+        <div class="chart-inner"><canvas id="c1contrib"></canvas></div>
+        <div class="source-note">Sumber: Data BPS (diolah)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 2 — DELTA TABLE NOMINAL & RIIL
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">02</span><span class="slide-tag">Delta Q1</span></div>
+    <div class="slide-title">Delta Nominal & Riil Q1 2026 vs Q1 2025 — <span class="accent">Perubahan YoY per Komponen</span></div>
+    <div class="slide-subtitle">Riil: Rp Miliar ADHK 2010 | Nominal: Rp Miliar ADHB</div>
+    <div class="divider"></div>
+
+    <div style="overflow-x:auto;flex:1">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th rowspan="2" style="min-width:200px;vertical-align:bottom">Komponen</th>
+          <th colspan="4" style="text-align:center;border-bottom:none;color:var(--teal);font-size:.65rem;padding-bottom:.1rem">— RIIL (ADHK 2010, Rp Miliar) —</th>
+          <th colspan="4" style="text-align:center;border-bottom:none;color:var(--amber);font-size:.65rem;padding-bottom:.1rem">— NOMINAL (ADHB, Rp Miliar) —</th>
+        </tr>
+        <tr>
+          <th>Q1-2025</th><th>Q1-2026</th><th>Δ YoY</th><th>%Δ</th>
+          <th>Q1-2025</th><th>Q1-2026</th><th>Δ YoY</th><th>%Δ</th>
+        </tr>
+      </thead>
+      <tbody id="deltaTableBody"></tbody>
+    </table>
+    </div>
+    <div class="metric-row" style="margin-top:.7rem">
+      <div class="metric"><div class="metric-label">Delta Riil PDB Total</div><div class="metric-val mv-teal">+183,1 T</div><div class="metric-sub mono">+5,61% YoY</div></div>
+      <div class="metric"><div class="metric-label">Delta Nominal PDB Total</div><div class="metric-val mv-amber">+521,2 T</div><div class="metric-sub mono">+9,20% YoY</div></div>
+      <div class="metric"><div class="metric-label">Implicit Price Deflator</div><div class="metric-val mv-teal">+3,59 pp</div><div class="metric-sub mono">Nom vs Riil gap</div></div>
+    </div>
+    <div class="source-note">Sumber: Data BPS (diolah)</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 3 — TIME SERIES GROWTH Q1 2010–2026
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">03</span><span class="slide-tag">Time Series</span></div>
+    <div class="slide-title">Pertumbuhan YoY Q1 (2011–2026) — <span class="accent">Empat Komponen Utama</span></div>
+    <div class="slide-subtitle">Growth % Atas Dasar Harga Konstan 2010, hanya Q1 setiap tahun</div>
+    <div class="divider"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;flex:1;min-height:0">
+      <div class="chart-panel">
+        <div class="chart-title"><span style="color:var(--teal)">C</span> — Konsumsi (RT + LNPRT)</div>
+        <div class="chart-inner"><canvas id="cC"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title"><span style="color:var(--amber)">G</span> — Konsumsi Pemerintah</div>
+        <div class="chart-inner"><canvas id="cG"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title"><span style="color:var(--green)">I</span> — PMTB + Perubahan Inventori</div>
+        <div class="chart-inner"><canvas id="cI"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title"><span style="color:var(--red)">X−M</span> — Net Ekspor (YoY pada level)</div>
+        <div class="chart-inner"><canvas id="cXM"></canvas></div>
+        <div class="source-note">Sumber: Data BPS (diolah)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 4 — APBN FACTS Q1 2026 vs Q1 2025
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">04</span><span class="slide-tag">Fiskal APBN</span></div>
+    <div class="slide-title">Realisasi APBN Q1 2026 vs Q1 2025 — <span class="accent">Penerimaan, Belanja & Defisit</span></div>
+    <div class="slide-subtitle">Realisasi s.d. 31 Maret 2026, Rp Triliun</div>
+    <div class="divider"></div>
+
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">Pendapatan Q1 2026</div><div class="metric-val mv-teal">574,9 T</div><div class="metric-sub mono">+10,5% YoY | 18,2% target</div></div>
+      <div class="metric"><div class="metric-label">Belanja Q1 2026</div><div class="metric-val mv-amber">815,0 T</div><div class="metric-sub mono">+31,4% YoY | 21,2% pagu</div></div>
+      <div class="metric"><div class="metric-label">Defisit Q1 2026</div><div class="metric-val mv-red">240,1 T</div><div class="metric-sub mono">34,8% target | 0,93% PDB</div></div>
+      <div class="metric"><div class="metric-label">Keseimbangan Primer Q1</div><div class="metric-val mv-red">−95,8 T</div><div class="metric-sub mono">106,8% thd target KP</div></div>
+    </div>
+
+    <div class="two-col" style="flex:1;min-height:0">
+      <div class="chart-panel">
+        <div class="chart-title">Perbandingan Realisasi Q1 2025 vs Q1 2026 (Rp T)</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#2563EB"></div>Q1 2025</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#2DD4BF"></div>Q1 2026</div>
+        </div>
+        <div class="chart-inner"><canvas id="cApbn1"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Komponen Belanja Q1 2026 — BPP vs TKD</div>
+        <div class="chart-inner"><canvas id="cApbn2"></canvas></div>
+        <div class="source-note">Sumber: Laporan APBN Kita April 2025 & 2026 (diolah)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 5 — HISTORICAL APBN TIME SERIES Q1
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">05</span><span class="slide-tag">Historis Fiskal</span></div>
+    <div class="slide-title">Time Series APBN Q1 2018–2026 — <span class="accent">Belanja, Penerimaan, Defisit & Keseimbangan Primer</span></div>
+    <div class="slide-subtitle">Fokus pada realisasi Triwulan I, Rp Triliun</div>
+    <div class="divider"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;flex:1;min-height:0">
+      <div class="chart-panel">
+        <div class="chart-title">Belanja & Penerimaan Q1 — Nominal + % vs Target</div>
+        <div class="chart-inner"><canvas id="cH1"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">% Realisasi Q1 terhadap Target APBN</div>
+        <div class="chart-inner"><canvas id="cH2"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Defisit Q1 — Nominal (Rp T) + % vs Target</div>
+        <div class="chart-inner"><canvas id="cH3"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Keseimbangan Primer Q1 (Rp T)</div>
+        <div class="chart-inner"><canvas id="cH4"></canvas></div>
+        <div class="source-note">Keseimbangan Primer 2020–2024 merupakan estimasi berdasarkan proyeksi pembayaran bunga. &nbsp; Sumber: Laporan APBN Kita 2018–2026 (diolah)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 6 — DATA MBG
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">06</span><span class="slide-tag">Program MBG</span></div>
+    <div class="slide-title">Makan Bergizi Gratis — <span class="accent">Realisasi & Dampak Investasi Q1 2026</span></div>
+    <div class="slide-subtitle">Data per 31 Maret 2026</div>
+    <div class="divider"></div>
+
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">Realisasi MBG Q1</div><div class="metric-val mv-teal">55,3 T</div><div class="metric-sub mono">16,5% dari target Rp335T</div></div>
+      <div class="metric"><div class="metric-label">% thd Realisasi Belanja Q1</div><div class="metric-val mv-amber">6,8%</div><div class="metric-sub mono">dari total belanja 815T</div></div>
+      <div class="metric"><div class="metric-label">Penerima Manfaat</div><div class="metric-val mv-teal">61,8 Jt</div><div class="metric-sub mono">siswa & non-siswa</div></div>
+      <div class="metric"><div class="metric-label">SPPG Operasional</div><div class="metric-val mv-amber">26.362</div><div class="metric-sub mono">per Maret 2026</div></div>
+      <div class="metric"><div class="metric-label">Est. Investasi Swasta SPPG</div><div class="metric-val mv-green">~Rp53–79 T</div><div class="metric-sub mono">@ Rp2–3 M per SPPG</div></div>
+    </div>
+
+    <div class="grid-2-1" style="flex:1">
+      <div class="chart-panel">
+        <div class="chart-title">Realisasi MBG Kumulatif Bulanan (Rp T) & Jalur Penyaluran Q1 2026</div>
+        <div class="chart-inner"><canvas id="cMBG1"></canvas></div>
+      </div>
+      <div class="col-flex">
+        <div class="chart-panel" style="flex:1">
+          <div class="chart-title">Komposisi Penyaluran MBG Q1 2026</div>
+          <div class="chart-inner"><canvas id="cMBG2"></canvas></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:.8rem 1rem">
+          <div style="font-size:.65rem;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem">Potensi Co-Investment Swasta</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--white)">26.362 SPPG</div>
+          <div style="font-size:.68rem;color:var(--gray1);margin:.2rem 0">× Rp 2–3 Miliar / SPPG</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--green)">= Rp 52,7 – 79,1 T</div>
+          <div style="font-size:.62rem;color:var(--gray2);margin-top:.3rem">32,5% – 48,8% dari delta PMTB nominal Q1 (+162,1T)</div>
+        </div>
+      </div>
+    </div>
+    <div class="source-note">Sumber: Laporan APBN Kita April 2026 (diolah). Estimasi investasi SPPG berdasarkan biaya setup dapur Rp2–3 miliar per unit × 26.362 SPPG operasional.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 7 — PENGARUH MBG KE PERTUMBUHAN
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s7">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">07</span><span class="slide-tag">Analisis MBG</span></div>
+    <div class="slide-title">Seberapa Besar Pengaruh MBG pada <span class="accent">Pertumbuhan Komponen G & I?</span></div>
+    <div class="slide-subtitle">Analisis kontribusi, multiplier, dan co-investment</div>
+    <div class="divider"></div>
+
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">Delta G Nominal Q1</div><div class="metric-val mv-amber">+81,7 T</div><div class="metric-sub mono">333,9T → 415,6T</div></div>
+      <div class="metric"><div class="metric-label">MBG dari Belanja Barang</div><div class="metric-val mv-teal">54,4 T</div><div class="metric-sub mono">~66% dari delta G</div></div>
+      <div class="metric"><div class="metric-label">G Growth Q1 2026</div><div class="metric-val mv-red">+21,81%</div><div class="metric-sub mono">tertinggi sejak 2024 Q1</div></div>
+      <div class="metric"><div class="metric-label">Multiplier Est. MBG</div><div class="metric-val mv-green">1,5–2,5×</div><div class="metric-sub mono">food transfer programs</div></div>
+    </div>
+
+    <div class="two-col" style="flex:1">
+      <div class="chart-panel">
+        <div class="chart-title">Dekomposisi Delta G Nominal Q1 2026 (+81,7T)</div>
+        <div class="chart-inner"><canvas id="cMult1"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div style="font-size:.7rem;color:var(--gray1);line-height:1.8;flex:1">
+          <div style="font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;color:var(--white);margin-bottom:.6rem">Teori Multiplier & Referensi</div>
+
+          <div style="background:var(--bg3);border-left:2px solid var(--teal);padding:.6rem .8rem;border-radius:0 4px 4px 0;margin-bottom:.5rem;font-size:.67rem">
+            <span style="color:var(--teal);font-weight:600">Blanchard & Leigh (2013) — AER</span><br>
+            Multiplier fiskal negara berkembang dengan output gap: <span class="mono" style="color:var(--white)">0,8–1,5×</span>
+          </div>
+          <div style="background:var(--bg3);border-left:2px solid var(--amber);padding:.6rem .8rem;border-radius:0 4px 4px 0;margin-bottom:.5rem;font-size:.67rem">
+            <span style="color:var(--amber);font-weight:600">Nakamura & Steinsson (2014) — AER</span><br>
+            Pengeluaran pemerintah saat kapasitas longgar: <span class="mono" style="color:var(--white)">~1,5×</span>
+          </div>
+          <div style="background:var(--bg3);border-left:2px solid var(--green);padding:.6rem .8rem;border-radius:0 4px 4px 0;margin-bottom:.5rem;font-size:.67rem">
+            <span style="color:var(--green);font-weight:600">Ahmed et al. (2016) — IFPRI</span><br>
+            Food transfer programs (developing): MPC tinggi → <span class="mono" style="color:var(--white)">1,5–2,5×</span>
+          </div>
+          <div style="background:var(--bg3);border-left:2px solid var(--red);padding:.6rem .8rem;border-radius:0 4px 4px 0;font-size:.67rem;margin-bottom:.6rem">
+            <span style="color:var(--red);font-weight:600">IMF (2019) — Fiscal Monitor</span><br>
+            Indonesia fiscal multiplier (baseline): <span class="mono" style="color:var(--white)">0,65–1,0×</span>
+          </div>
+
+          <div style="font-size:.67rem;color:var(--gray1);line-height:1.7">
+            <strong style="color:var(--white)">Estimasi dampak MBG:</strong> Dengan alokasi Q1 = Rp54,4T dan multiplier 1,5–2,5×, potensi output tambahan = <span class="mono" style="color:var(--teal)">Rp81,6–136,0T</span> atau kontribusi <span class="mono" style="color:var(--teal)">2,4–3,9%</span> ke PDB nominal Q1.
+            <br><br>
+            <strong style="color:var(--white)">Co-investment SPPG:</strong> Investasi swasta ~Rp52,7–79,1T untuk dapur/SPPG merupakan pembentukan aset riil yang <em>additive</em> ke PMTB. Ini adalah model baru public-private co-investment di Indonesia yang belum pernah ada dalam format ini sebelumnya.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="source-note">Sumber: Laporan APBN Kita April 2026 (diolah). Estimasi multiplier berdasarkan literatur internasional; belum tersedia studi spesifik MBG.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 8 — LAMPU KUNING
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">08</span><span class="slide-tag">Risiko Makro</span></div>
+    <div class="slide-title">Hal-Hal yang Menjadi <span style="color:var(--amber)">⚠ Lampu Kuning</span></div>
+    <div class="slide-subtitle">Indikator kerentanan makroekonomi dan fiskal yang perlu dicermati</div>
+    <div class="divider"></div>
+    <div class="flag-grid">
+      <div class="flag-card danger">
+        <div class="flag-num">01</div>
+        <div class="flag-title">Defisit APBN Q1 Terdalam Sejak 2019</div>
+        <div class="flag-body">
+          Realisasi defisit Q1 2026 = <span class="flag-stat">Rp240,1T</span> atau <span class="flag-stat">34,8%</span> dari target tahunan. Ini merupakan rasio Q1/target tertinggi sejak 2019 (34,5%) dalam era non-pandemi. Secara nominal, lebih tinggi 140,5% YoY dari Q1 2025 (Rp99,8T). Jika laju ini berlanjut, defisit akhir tahun berpotensi melampaui target 2,68% PDB.
+        </div>
+      </div>
+      <div class="flag-card danger">
+        <div class="flag-num">02</div>
+        <div class="flag-title">Keseimbangan Primer Merah: −Rp95,8T</div>
+        <div class="flag-body">
+          Q1 2026 adalah pertama kali sejak Q1 2021 keseimbangan primer kembali defisit. Perubahan dari <span class="flag-stat">+Rp21,9T</span> (Q1 2025) ke <span class="flag-stat">−Rp95,8T</span> (Q1 2026) = swing negatif <span class="flag-stat">−Rp117,7T</span> dalam setahun. Defisit primer mengindikasikan bahwa penerimaan tidak cukup untuk membiayai belanja bahkan sebelum memperhitungkan pembayaran bunga utang.
+        </div>
+      </div>
+      <div class="flag-card warn">
+        <div class="flag-num">03</div>
+        <div class="flag-title">Net Ekspor (X−M) Tertekan: −Rp80,7T Delta</div>
+        <div class="flag-body">
+          Net ekspor nominal Q1 2026 = <span class="flag-stat">+Rp57,5T</span> vs Q1 2025 = <span class="flag-stat">+Rp138,2T</span>. Penyusutan <span class="flag-stat">−Rp80,7T</span> mencerminkan impor tumbuh 12,0% (nominal) vs ekspor hanya 4,3%. Secara riil, ekspor hanya tumbuh <span class="flag-stat">+0,9%</span> sementara impor +7,2%. Tekanan pada neraca transaksi berjalan berpotensi menekan nilai tukar rupiah jika tren berlanjut ke Q2–Q3.
+        </div>
+      </div>
+      <div class="flag-card warn">
+        <div class="flag-num">04</div>
+        <div class="flag-title">Belanja G Akselerasi vs Penerimaan yang Moderat</div>
+        <div class="flag-body">
+          Penerimaan pajak Q1 2026 = <span class="flag-stat">Rp394,8T</span> (+20,7% YoY), pertumbuhan solid. Namun selisih belanja-penerimaan terus melebar: BPP Q1 2026 = <span class="flag-stat">Rp610,3T</span> vs pendapatan <span class="flag-stat">Rp574,9T</span>. Tax ratio Indonesia masih berada di kisaran <span class="flag-stat">10–11% PDB</span>, jauh di bawah benchmark negara-negara sebanding. Percepatan belanja tanpa kenaikan tax ratio yang struktural berisiko meningkatkan ketergantungan pada utang.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 9 — TAKE-AWAY
+═══════════════════════════════════════════════════ -->
+<section class="slide" id="s9">
+  <div class="slide-inner">
+    <div class="slide-header"><span class="slide-num">09</span><span class="slide-tag">Kesimpulan</span></div>
+    <div class="slide-title">Take-Away — <span class="accent">Apa yang Bisa Dipelajari dari Q1 2026?</span></div>
+    <div class="slide-subtitle">Sintesis analisis makroekonomi dan fiskal</div>
+    <div class="divider"></div>
+    <div class="ta-grid">
+      <div class="ta-side good">
+        <div class="ta-side-title">✓ Sisi Positif</div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Hack percepatan penyerapan anggaran.</strong> MBG berhasil memecah isu klasik kelambatan belanja pemerintah di Q1. Realisasi belanja 21,2% dari pagu di Q1 adalah tertinggi dalam 8 tahun non-pandemi — sebuah terobosan dalam manajemen fiskal awal tahun.</div></div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Model co-investment publik-swasta yang inovatif.</strong> Operasionalisasi dapur SPPG sebagai aset swasta yang dikontrak pemerintah menciptakan mekanisme pembentukan investasi riil baru di Indonesia. ~Rp52,7–79,1T potensi investasi swasta yang "ditarik" oleh kebijakan publik adalah multiplier yang belum pernah ada dalam format ini.</div></div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Pertumbuhan penerimaan pajak menguat.</strong> Penerimaan pajak Q1 2026 tumbuh +20,7% YoY (Rp394,8T), signal positif sebelum melihat tax ratio yang masih rendah secara struktural.</div></div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>PDB tumbuh 5,61% — tertinggi dalam 13 tahun.</strong> Momentum pertumbuhan menguat signifikan, didorong G dan C secara bersamaan.</div></div>
+      </div>
+      <div class="ta-side bad">
+        <div class="ta-side-title">✗ Sisi Negatif</div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Defisit dan keseimbangan primer tertekan berat.</strong> Defisit Q1 = Rp240,1T (34,8% target), keseimbangan primer = −Rp95,8T — swing negatif terbesar sejak pandemi. Tekanan fiskal ini nyata dan membutuhkan perhatian di Q2-Q4.</div></div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Risiko "perburuan SPPG" mirip model ICE.</strong> Model co-investment SPPG yang pro-profit, jika tidak diawasi ketat, berpotensi menciptakan insentif yang salah — "perburuan penerima manfaat" demi revenue SPPG, serupa dengan kritik terhadap model privatisasi ICE di AS. Oversight dan akuntabilitas publik menjadi kunci.</div></div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Net ekspor dan current account tertekan.</strong> X−M menyusut Rp80,7T secara nominal. Kombinasi impor tinggi + ekspor stagnan adalah tekanan nyata pada neraca pembayaran dan stabilitas rupiah.</div></div>
+        <div class="ta-item"><div class="ta-bullet"></div><div class="ta-text"><strong>Tax ratio belum membaik secara struktural.</strong> Pertumbuhan penerimaan pajak YoY positif, namun rasio pajak terhadap PDB Indonesia (~10-11%) tetap jauh di bawah negara-negara peers. Tanpa perbaikan tax ratio, ekspansi belanja jangka menengah hanya akan ditopang oleh utang.</div></div>
+      </div>
+    </div>
+    <div class="source-note" style="margin-top:.6rem">Analisis: berdasarkan data BPS dan Laporan APBN Kita 2018–2026 (Kemenkeu RI). Bukan merupakan rekomendasi kebijakan resmi.</div>
+  </div>
+</section>
+
+<script>
+// ===================================================
+// DATA
+// ===================================================
+const years = [2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+
+const gData = {
+  C_yoy: [4.13,5.56,5.7,5.57,4.7,4.99,4.99,5.02,5.27,2.65,-2.25,4.39,4.57,5.33,4.9,5.53],
+  G_yoy: [8.43,7.74,2.97,6.06,2.92,3.43,2.68,2.73,5.26,3.87,2.59,-6.58,3.33,20.45,-1.22,21.81],
+  I_yoy: [15.52,9.27,3.41,4.46,3.88,4.06,5.39,8.35,3.82,0.4,0.97,3.7,1.68,3.94,3.79,7.24],
+  XM_yoy:[-10.0,-34.44,13.08,-25.85,41.26,25.05,47.85,-48.21,80.92,58.5,-13.73,3.6,68.4,1.6,16.49,-24.34],
+  PDB_yoy:[6.48,6.11,5.54,5.12,4.83,4.94,5.01,5.07,5.06,2.97,-0.69,5.02,5.04,5.11,4.87,5.61]
+};
+
+// Slide 1 data
+const s1 = {
+  labels: ['1. Kons.RT','2. LNPRT','3. Kons.Pemth','4. PMTB','5. Inventori','6. Ekspor','7. Impor','Diskrepansi'],
+  r25: [1742.1,45.3,188.2,979.3,85.2,775.9,621.3,69.9],
+  r26: [1838.2,48.1,229.2,1037.7,104.0,782.9,665.9,73.5],
+  contrib: [2.94,0.09,1.26,1.79,0.57,0.21,-1.37,0.11]
+};
+
+// Slide 2 delta table
+const s2data = [
+  {name:'C — Konsumsi RT',             r25:1742140.9, r26:1838230.1, n25:3091225.5, n26:3363068.9, group:'C'},
+  {name:'└ Kons. LNPRT',               r25:45287.9,   r26:48131.0,   n25:78588.5,   n26:86800.5,   group:'C'},
+  {name:'G — Kons. Pemerintah',         r25:188175.4,  r26:229222.8,  n25:333940.4,  n26:415611.9,  group:'G'},
+  {name:'I — PMTB',                     r25:979303.8,  r26:1037666.9, n25:1588439.6, n26:1750540.9, group:'I'},
+  {name:'└ Perubahan Inventori',         r25:85221.8,   r26:103957.6,  n25:175036.6,  n26:216268.2,  group:'I'},
+  {name:'X — Ekspor B&J',               r25:775886.4,  r26:782901.6,  n25:1258466.7, n26:1312750.8, group:'X'},
+  {name:'M — Impor B&J (pengurang)',    r25:621286.8,  r26:665925.5,  n25:1120531.9, n26:1255241.6, group:'M'},
+  {name:'Diskrepansi Statistik',         r25:69860.5,   r26:73498.2,   n25:260781.4,  n26:297363.1,  group:'D'},
+  {name:'PDB TOTAL',                     r25:3264589.8, r26:3447682.8, n25:5665946.7, n26:6187162.6, group:'T'},
+];
+
+// APBN historical data
+const apbn = {
+  yr: [2018,2019,2020,2021,2022,2023,2024,2025,2026],
+  pend: [333.8,350.1,376.4,378.8,501.0,647.2,620.0,520.4,574.9],
+  bel:  [419.6,452.1,277.9,523.0,490.6,518.7,611.9,620.3,815.0],
+  def:  [85.8,102.0,null,144.2,-10.4,-128.5,-8.1,99.8,240.1],
+  kp:   [-17.3,-31.4,null,-64.2,95.4,128.5,108.1,21.9,-95.8], // 2020 N/A, 2022-2024 est
+  tPend:[1894.7,2165.1,2233.2,1743.7,1846.1,2463.0,2802.3,3005.1,3153.6],
+  tBel: [2220.7,2461.1,2540.4,2750.0,2714.2,3061.2,3325.1,3621.3,3842.7],
+  tDef: [325.9,296.0,307.2,1006.4,868.0,598.2,522.8,616.2,689.1],
+};
+apbn.pctP = apbn.tPend.map((t,i)=>(apbn.pend[i]/t*100));
+apbn.pctB = apbn.tBel.map((t,i)=>(apbn.bel[i]/t*100));
+apbn.pctD = apbn.tDef.map((t,i)=> apbn.def[i]!==null ? Math.abs(apbn.def[i])/t*100 : null);
+
+// ===================================================
+// UTILS
+// ===================================================
+const C = {
+  teal:'#2DD4BF', teal2:'#14B8A6',
+  amber:'#F59E0B', amber2:'#D97706',
+  red:'#EF4444',  red2:'#DC2626',
+  green:'#22C55E', blue:'#3B82F6',
+  blue2:'#2563EB', gray:'#475569',
+  white:'#F8FAFC', gray1:'#CBD5E1',
+};
+const defGrids = {color:'rgba(255,255,255,0.06)'};
+const defTicks = {color:'#64748B',font:{size:10,family:"'JetBrains Mono',monospace"}};
+const commonOpts = (yLabel='',extraScales={}) => ({
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label||''}: ${typeof ctx.parsed.y==='number'?ctx.parsed.y.toFixed(2):'-'}${yLabel}`}}},
+  scales:{
+    x:{grid:defGrids,ticks:{...defTicks,autoSkip:false,maxRotation:45}},
+    y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}${yLabel}`}},
+    ...extraScales
+  }
+});
+
+function mkChart(id,cfg){
+  const ctx=document.getElementById(id);
+  if(!ctx) return;
+  return new Chart(ctx,cfg);
+}
+
+function fmtT(v){
+  if(v===null||v===undefined) return '—';
+  return (Math.abs(v)/1000).toFixed(1);
+}
+function fmtM(v){ return (v/1000).toFixed(1)+'T'; }
+function signClass(v){ return v>0?'pos':v<0?'neg':'neu'; }
+
+// ===================================================
+// SLIDE 1 CHARTS
+// ===================================================
+mkChart('c1bar',{
+  type:'bar',
+  data:{
+    labels:s1.labels,
+    datasets:[
+      {label:'Q1 2025',data:s1.r25,backgroundColor:C.blue2+'CC',borderRadius:3},
+      {label:'Q1 2026',data:s1.r26,backgroundColor:C.teal+'CC',borderRadius:3},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: Rp${ctx.parsed.y.toFixed(1)}T`}}},
+    scales:{
+      x:{grid:defGrids,ticks:{...defTicks,font:{size:9,family:"'IBM Plex Sans',sans-serif"},maxRotation:35,autoSkip:false}},
+      y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}T`}}
+    }
+  }
+});
+
+mkChart('c1contrib',{
+  type:'bar',
+  data:{
+    labels:['C–RT','LNPRT','G','I–PMTB','Inventori','Ekspor','Impor','Disk'],
+    datasets:[{
+      label:'Kontribusi',
+      data:s1.contrib,
+      backgroundColor:s1.contrib.map(v=>v>0?C.teal+'BB':C.red+'BB'),
+      borderRadius:3
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.x.toFixed(2)} pp`}}},
+    scales:{
+      x:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v} pp`}},
+      y:{grid:{display:false},ticks:{...defTicks,font:{size:10,family:"'IBM Plex Sans',sans-serif"}}}
+    }
+  }
+});
+
+// ===================================================
+// SLIDE 2 TABLE
+// ===================================================
+(function(){
+  const tbody = document.getElementById('deltaTableBody');
+  if(!tbody) return;
+  s2data.forEach(d=>{
+    const dr = d.r26-d.r25, prdr = dr/Math.abs(d.r25)*100;
+    const dn = d.n26-d.n25, pndn = dn/Math.abs(d.n25)*100;
+    const isTotal = d.group==='T';
+    const isM = d.group==='M';
+    const isDent = d.name.startsWith('└');
+    const signR = isM ? -1 : 1;
+    const signN = isM ? -1 : 1;
+    const tr = document.createElement('tr');
+    if(isTotal) tr.className='total-row';
+    tr.innerHTML = `
+      <td style="${isDent?'color:var(--gray2);font-size:.65rem;padding-left:1.2rem':''}">${d.name}</td>
+      <td>${fmtM(d.r25)}</td><td>${fmtM(d.r26)}</td>
+      <td class="${signClass(signR*dr)}">${dr>0?'+':''}${fmtM(dr)}</td>
+      <td class="${signClass(signR*prdr)}">${prdr>0?'+':''}${prdr.toFixed(1)}%</td>
+      <td>${fmtM(d.n25)}</td><td>${fmtM(d.n26)}</td>
+      <td class="${signClass(signN*dn)}">${dn>0?'+':''}${fmtM(dn)}</td>
+      <td class="${signClass(signN*pndn)}">${pndn>0?'+':''}${pndn.toFixed(1)}%</td>
+    `;
+    tbody.appendChild(tr);
+  });
+})();
+
+// ===================================================
+// SLIDE 3 TIME SERIES
+// ===================================================
+function tsChart(id,label,data,color,pdbLine=true){
+  const datasets = [
+    {label:label,data:data,borderColor:color,backgroundColor:color+'22',fill:true,tension:0.35,borderWidth:2,pointRadius:3,pointBackgroundColor:data.map(v=>v===null?'transparent':color),pointBorderColor:'transparent',spanGaps:true}
+  ];
+  if(pdbLine){
+    datasets.push({label:'PDB',data:gData.PDB_yoy,borderColor:C.gray+'99',borderDash:[4,3],borderWidth:1.5,pointRadius:0,tension:0.3,fill:false});
+  }
+  return mkChart(id,{
+    type:'line',
+    data:{labels:years.map(String),datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y!==null?ctx.parsed.y.toFixed(2)+'%':'N/A'}`}},
+        annotation:{annotations:{
+          zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,0.2)',borderWidth:1},
+          y2026:{type:'line',xMin:'2026',xMax:'2026',borderColor:color+'88',borderDash:[3,3],borderWidth:1.5}
+        }}
+      },
+      scales:{
+        x:{grid:defGrids,ticks:{...defTicks,maxRotation:45,autoSkip:false}},
+        y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}%`}}
+      }
+    }
+  });
+}
+
+tsChart('cC','C',gData.C_yoy,C.teal);
+tsChart('cG','G',gData.G_yoy,C.amber);
+tsChart('cI','I',gData.I_yoy,C.green);
+tsChart('cXM','X-M',gData.XM_yoy,C.red);
+
+// ===================================================
+// SLIDE 4 — APBN COMPARISON
+// ===================================================
+mkChart('cApbn1',{
+  type:'bar',
+  data:{
+    labels:['Pendapatan','Belanja K/L','Belanja Non-K/L','TKD','Total Belanja','Defisit'],
+    datasets:[
+      {label:'Q1 2025',data:[520.4,196.1,217.2,207.1,620.3,99.8],backgroundColor:C.blue2+'BB',borderRadius:3},
+      {label:'Q1 2026',data:[574.9,281.2,329.1,204.8,815.0,240.1],backgroundColor:C.teal+'BB',borderRadius:3}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: Rp${ctx.parsed.y.toFixed(1)}T`}}},
+    scales:{x:{grid:defGrids,ticks:{...defTicks,font:{size:9},maxRotation:35}},y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}T`}}}
+  }
+});
+
+mkChart('cApbn2',{
+  type:'doughnut',
+  data:{
+    labels:['Belanja K/L','Belanja Non-K/L','Transfer Ke Daerah'],
+    datasets:[{
+      data:[281.2,329.1,204.8],
+      backgroundColor:[C.teal+'CC',C.amber+'CC',C.blue+'CC'],
+      borderWidth:0,
+      hoverOffset:8
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:true,position:'bottom',labels:{color:C.gray1,font:{size:10,family:"'IBM Plex Sans',sans-serif"},padding:12,boxWidth:10}},
+      tooltip:{callbacks:{label:ctx=>`Rp${ctx.parsed.toFixed(1)}T (${(ctx.parsed/815*100).toFixed(1)}%)`}}
+    }
+  }
+});
+
+// ===================================================
+// SLIDE 5 — HISTORICAL
+// ===================================================
+const apbnLabels = apbn.yr.map(String);
+
+// H1: Nominal bar + line
+mkChart('cH1',{
+  type:'bar',
+  data:{
+    labels:apbnLabels,
+    datasets:[
+      {label:'Penerimaan',data:apbn.pend,backgroundColor:C.teal+'99',borderRadius:3,yAxisID:'y'},
+      {label:'Belanja',data:apbn.bel,backgroundColor:C.amber+'99',borderRadius:3,yAxisID:'y'},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'top',labels:{color:C.gray1,font:{size:9},padding:8,boxWidth:10}},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: Rp${ctx.parsed.y.toFixed(1)}T`}}},
+    scales:{
+      x:{grid:defGrids,ticks:defTicks},
+      y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}T`},title:{display:true,text:'Rp T',color:C.gray1,font:{size:9}}}
+    }
+  }
+});
+
+// H2: % vs target
+mkChart('cH2',{
+  type:'bar',
+  data:{
+    labels:apbnLabels,
+    datasets:[
+      {label:'% Penerimaan',data:apbn.pctP,backgroundColor:C.teal+'BB',borderRadius:3},
+      {label:'% Belanja',data:apbn.pctB,backgroundColor:C.amber+'BB',borderRadius:3},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:true,position:'top',labels:{color:C.gray1,font:{size:9},padding:8,boxWidth:10}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`}},
+      annotation:{annotations:{avg:{type:'line',yMin:18.3,yMax:18.3,borderColor:C.gray+'77',borderDash:[4,3],borderWidth:1.5,label:{content:'Rata-rata belanja 18,3%',display:true,position:'end',color:C.gray1,font:{size:9}}}}}
+    },
+    scales:{x:{grid:defGrids,ticks:defTicks},y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}%`}}}
+  }
+});
+
+// H3: Defisit
+mkChart('cH3',{
+  type:'bar',
+  data:{
+    labels:apbnLabels,
+    datasets:[{
+      label:'Defisit/Surplus Q1',
+      data:apbn.def,
+      backgroundColor:apbn.def.map(v=>v===null?'transparent':v>0?C.red+'BB':C.green+'BB'),
+      borderRadius:3
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.parsed.y!==null?(ctx.parsed.y>0?'Defisit':'Surplus')+' Rp'+Math.abs(ctx.parsed.y).toFixed(1)+'T':'N/A'}`}},annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,0.3)',borderWidth:1}}}},
+    scales:{x:{grid:defGrids,ticks:defTicks},y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}T`}}}
+  }
+});
+
+// H4: Keseimbangan Primer
+mkChart('cH4',{
+  type:'bar',
+  data:{
+    labels:apbnLabels,
+    datasets:[{
+      label:'Keseimbangan Primer Q1',
+      data:apbn.kp,
+      backgroundColor:apbn.kp.map(v=>v===null?'transparent':v>0?C.green+'BB':C.red+'BB'),
+      borderRadius:3
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` KP Q1: ${ctx.parsed.y!==null?(ctx.parsed.y>0?'+':'')+ctx.parsed.y.toFixed(1)+'T':'Est. N/A'}`}},annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,0.3)',borderWidth:1}}}},
+    scales:{x:{grid:defGrids,ticks:defTicks},y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}T`}}}
+  }
+});
+
+// ===================================================
+// SLIDE 6 — MBG
+// ===================================================
+mkChart('cMBG1',{
+  type:'bar',
+  data:{
+    labels:['Januari 2026','Februari 2026','Maret 2026'],
+    datasets:[
+      {label:'Kumulatif MBG (Rp T)',data:[19.55,38.97,55.34],backgroundColor:[C.teal+'88',C.teal+'AA',C.teal+'CC'],borderRadius:4,yAxisID:'y'},
+      {label:'Bulanan (Rp T)',data:[19.55,19.42,16.37],backgroundColor:C.amber+'66',borderRadius:4,yAxisID:'y'},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:true,position:'top',labels:{color:C.gray1,font:{size:9},padding:8,boxWidth:10}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: Rp${ctx.parsed.y.toFixed(2)}T`}}
+    },
+    scales:{x:{grid:defGrids,ticks:defTicks},y:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}T`}}}
+  }
+});
+
+mkChart('cMBG2',{
+  type:'doughnut',
+  data:{
+    labels:['Belanja K/L (MBG ops)','Subsidi Pupuk','BULOG (pengadaan beras)'],
+    datasets:[{
+      data:[5.9,25.1,22.7],
+      backgroundColor:[C.teal+'CC',C.amber+'CC',C.blue+'CC'],
+      borderWidth:0,hoverOffset:8
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:true,position:'bottom',labels:{color:C.gray1,font:{size:9},padding:8,boxWidth:10}},
+      tooltip:{callbacks:{label:ctx=>`Rp${ctx.parsed.toFixed(1)}T (${(ctx.parsed/53.7*100).toFixed(1)}%)`}}
+    }
+  }
+});
+
+// ===================================================
+// SLIDE 7 — MBG MULTIPLIER
+// ===================================================
+mkChart('cMult1',{
+  type:'bar',
+  data:{
+    labels:['Belanja G Total Q1 2026','└ MBG (Belanja Barang K/L)','└ THR & Gaji PNS','└ Lainnya'],
+    datasets:[{
+      label:'Rp T',
+      data:[415.6,54.4,30.0,331.2],
+      backgroundColor:[C.teal+'77',C.amber+'CC',C.blue+'99',C.gray+'55'],
+      borderRadius:4,
+      borderSkipped:false,
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` Rp${ctx.parsed.x.toFixed(1)}T`}}},
+    scales:{x:{grid:defGrids,ticks:{...defTicks,callback:v=>`${v}T`}},y:{grid:{display:false},ticks:{...defTicks,font:{size:10}}}}
+  }
+});
+
+// ===================================================
+// NAVIGATION DOTS
+// ===================================================
+const slides = document.querySelectorAll('.slide');
+const dotCont = document.getElementById('nav-dots');
+const labels0 = ['Intro','PDB Comp.','Delta','Time Series','APBN Facts','Hist. APBN','MBG Data','MBG Analisis','Lampu Kuning','Take-Away'];
+
+slides.forEach((_,i)=>{
+  const d = document.createElement('button');
+  d.className='dot';
+  d.title=labels0[i]||`Slide ${i}`;
+  d.onclick=()=>slides[i].scrollIntoView({behavior:'smooth'});
+  dotCont.appendChild(d);
+});
+
+const dots = dotCont.querySelectorAll('.dot');
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const i = [...slides].indexOf(e.target);
+      dots.forEach((d,j)=>d.classList.toggle('active',j===i));
+    }
+  });
+},{threshold:0.5});
+slides.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
