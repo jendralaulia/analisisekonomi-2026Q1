@@ -610,18 +610,33 @@ const chartH1 = mk('cH1',{type:'bar',data:{labels:apbnYrs,datasets:[
 
 function toggleH1(mode){
   if(!chartH1) return;
-  document.querySelectorAll('.rb-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#rb-all,#rb-pend,#rb-bel').forEach(b=>b.classList.remove('active'));
   document.getElementById('rb-'+mode).classList.add('active');
-  // 0 = Penerimaan, 1 = Belanja
   const vis = mode==='all'?[true,true]:mode==='pend'?[true,false]:[false,true];
   chartH1.data.datasets.forEach((ds,i)=>{ ds.hidden = !vis[i]; });
   chartH1.update();
 }
 
-mk('cH2',{type:'bar',data:{labels:apbnYrs,datasets:[
+const chartH2 = mk('cH2',{type:'bar',data:{labels:apbnYrs,datasets:[
   {label:'% Penerimaan',data:apbn.pctP,backgroundColor:TC+'88',borderRadius:3},
   {label:'% Belanja',data:apbn.pctB,backgroundColor:BC+'88',borderRadius:3}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}},annotation:{annotations:{avg:{type:'line',yMin:18.3,yMax:18.3,borderColor:GRC+'99',borderDash:[4,3],borderWidth:1.5,label:{content:'Rata-rata belanja 18,3%',display:true,position:'end',color:'#6b7280',font:{size:8}}}}}},scales:{x:{grid,ticks},y:{grid,ticks:{...ticks,callback:v=>`${v}%`}}}}});
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{
+  legend:{display:false},
+  tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}},
+  annotation:{annotations:{avg:{type:'line',yMin:18.3,yMax:18.3,borderColor:'#dc2626',borderDash:[5,3],borderWidth:2,
+    label:{content:'Rata-rata belanja 18,3%',display:true,position:'end',
+      color:'#dc2626',font:{size:9,weight:'600',family:"'IBM Plex Sans',sans-serif"},
+      backgroundColor:'rgba(255,255,255,0.85)',padding:3}}}}
+},scales:{x:{grid,ticks},y:{grid,ticks:{...ticks,callback:v=>`${v}%`}}}}});
+
+function toggleH2(mode){
+  if(!chartH2) return;
+  document.querySelectorAll('[id^="rb2-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('rb2-'+mode).classList.add('active');
+  const vis=mode==='all'?[true,true]:mode==='pend'?[true,false]:[false,true];
+  chartH2.data.datasets.forEach((ds,i)=>{ds.hidden=!vis[i];});
+  chartH2.update();
+}
 
 mk('cH3',{type:'bar',data:{labels:apbnYrs,datasets:[{label:'Defisit/Surplus',data:apbn.def,backgroundColor:apbn.def.map(v=>v===null?'transparent':v>0?RC+'88':GC+'88'),borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y!==null?` ${c.parsed.y>0?'Defisit':'Surplus'}: Rp${Math.abs(c.parsed.y).toFixed(1)}T`:'—'}},annotation:{annotations:{z0:{type:'line',yMin:0,yMax:0,borderColor:'rgba(0,0,0,0.2)',borderWidth:1}}}},scales:{x:{grid,ticks},y:{grid,ticks:{...ticks,callback:v=>`${v}T`}}}}});
 
@@ -692,6 +707,31 @@ mk('cMBG2',{
 const deltaG = [11.7,20.6,11.3,22.5,14.6,20.4,11.8,12.8,16.4,19.0,10.1,-16.9,12.2,65.9,2.0,81.67];
 const deltaGYrs = ['2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
 const avgG = 15.61;
+
+// Custom plugin to draw value labels on bars
+const datalabelsPlugin = {
+  id:'datalabels',
+  afterDatasetsDraw(chart){
+    const ctx=chart.ctx;
+    chart.data.datasets.forEach((ds,di)=>{
+      chart.getDatasetMeta(di).data.forEach((bar,i)=>{
+        const v=ds.data[i];
+        if(v===null||v===undefined) return;
+        const isHighlight = i===15||i===13; // 2026, 2024
+        if(!isHighlight && Math.abs(v)<15) return; // only label notable bars
+        ctx.save();
+        ctx.font=`${isHighlight?'700':'400'} ${isHighlight?11:9}px 'JetBrains Mono',monospace`;
+        ctx.fillStyle=isHighlight?(i===15?RC:BC):'#6b7280';
+        ctx.textAlign='center';
+        ctx.textBaseline=v>=0?'bottom':'top';
+        const yPos=v>=0?bar.y-4:bar.y+4;
+        ctx.fillText((v>0?'+':'')+v.toFixed(1)+'T', bar.x, yPos);
+        ctx.restore();
+      });
+    });
+  }
+};
+
 mk('cM1',{
   type:'bar',
   data:{
@@ -700,46 +740,49 @@ mk('cM1',{
       label:'Delta G Nominal Q1 (Rp T)',
       data:deltaG,
       backgroundColor:deltaG.map((v,i)=>
-        i===15 ? RC+'CC' :          // 2026 merah
-        i===13 ? BC+'AA' :          // 2024 amber (outlier sebelumnya)
-        v<0    ? '#9ca3af88' :       // negatif abu-abu
-                 TC+'77'             // normal teal
+        i===15 ? RC+'DD' :
+        i===13 ? BC+'CC' :
+        v<0    ? '#9ca3af66' :
+                 TC+'77'
       ),
+      borderColor:deltaG.map((v,i)=>i===15?RC:i===13?BC:'transparent'),
+      borderWidth:deltaG.map((_,i)=>i===15||i===13?1.5:0),
       borderRadius:3
     }]
   },
+  plugins:[datalabelsPlugin],
   options:{
     responsive:true,maintainAspectRatio:false,
     plugins:{
       legend:{display:false},
-      tooltip:{callbacks:{label:c=>` ${c.parsed.y>0?'+':''}${c.parsed.y.toFixed(2)} T`}},
+      tooltip:{callbacks:{label:c=>` ${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(2)} T`}},
       annotation:{annotations:{
-        avg:{type:'line',yMin:avgG,yMax:avgG,borderColor:RC+'99',borderDash:[5,3],borderWidth:1.8,
-          label:{content:`Rata-rata 2011–2025: +${avgG}T`,display:true,position:'end',
-            color:RC,font:{size:8,family:"'IBM Plex Sans',sans-serif"},backgroundColor:'transparent'}},
-        normal:{type:'box',yMin:0,yMax:avgG*1.5,backgroundColor:TC+'08',borderWidth:0,
-          label:{content:'Zona normal',display:true,position:{x:'center',y:'start'},
-            color:TC,font:{size:8},backgroundColor:'transparent'}}
+        avg:{
+          type:'line',yMin:avgG,yMax:avgG,
+          borderColor:'#dc2626',borderDash:[6,3],borderWidth:2.5,
+          label:{
+            content:`Rata-rata 2011–2025: +${avgG} T`,
+            display:true,position:'start',
+            color:'#dc2626',
+            font:{size:10,weight:'600',family:"'IBM Plex Sans',sans-serif"},
+            backgroundColor:'rgba(255,255,255,0.9)',
+            padding:{x:6,y:3},
+            borderRadius:3
+          }
+        }
       }}
     },
     scales:{
-      x:{grid,ticks:{...ticks,maxRotation:45,autoSkip:false}},
-      y:{grid,ticks:{...ticks,callback:v=>`${v}T`},title:{display:true,text:'Rp T',color:'#9ca3af',font:{size:9}}}
+      x:{grid,ticks:{...ticks,maxRotation:45,autoSkip:false,
+        color:deltaGYrs.map((_,i)=>i===15?RC:i===13?BC:'#9ca3af')}},
+      y:{grid,ticks:{...ticks,callback:v=>`${v}T`},
+        title:{display:true,text:'Rp T',color:'#9ca3af',font:{size:9}}}
     }
   }
 });
 
 // ─── SLIDE 5 — cH2 with toggle ───
-const chartH2 = // cH2 now created with toggle above
-
-function toggleH2(mode){
-  if(!chartH2) return;
-  document.querySelectorAll('[id^="rb2-"]').forEach(b=>b.classList.remove('active'));
-  document.getElementById('rb2-'+mode).classList.add('active');
-  const vis=mode==='all'?[true,true]:mode==='pend'?[true,false]:[false,true];
-  chartH2.data.datasets.forEach((ds,i)=>{ds.hidden=!vis[i];});
-  chartH2.update();
-}
+// (chartH2 and toggleH2 defined above in SLIDE 5 section)
 
 // ─── NAV DOTS ───
 const slides=document.querySelectorAll('.slide');
